@@ -1,0 +1,133 @@
+<!-- templates/appliance_consumption.html -->
+{% extends 'base.html' %}
+
+{% block title %}Appliance Consumption{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h2 class="card-title">Appliance Consumption Breakdown</h2>
+        <div>
+            <select id="month-selector" class="form-select form-select-sm" style="width: auto; display: inline-block;">
+                {% for month in months %}
+                <option value="{{ month }}">{{ month }}</option>
+                {% endfor %}
+            </select>
+            <a href="/download/appliance_consumption" class="btn btn-primary btn-sm ms-2">Download Data</a>
+        </div>
+    </div>
+    <div class="card-body">
+        <div id="pie-chart" style="height: 500px;"></div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title">Appliance Analysis</h5>
+            </div>
+            <div class="card-body">
+                <p>Understanding how different appliances contribute to your overall electricity consumption can help you identify opportunities for energy savings.</p>
+                <p>Select different months from the dropdown above to compare how appliance usage changes throughout the year.</p>
+                <div id="appliance-summary" class="mt-3">
+                    <h6>Top Electricity Consumers:</h6>
+                    <div class="progress mb-2" style="height: 20px;">
+                        <div class="progress-bar" role="progressbar" style="width: 45%; background-color: rgb(33, 75, 99);" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100">AC (45%)</div>
+                    </div>
+                    <div class="progress mb-2" style="height: 20px;">
+                        <div class="progress-bar" role="progressbar" style="width: 25%; background-color: rgb(79, 129, 102);" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">Fridge (25%)</div>
+                    </div>
+                    <div class="progress mb-2" style="height: 20px;">
+                        <div class="progress-bar" role="progressbar" style="width: 15%; background-color: rgb(151, 179, 100);" aria-valuenow="15" aria-valuemin="0" aria-valuemax="100">Kitchen Appliances (15%)</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title">Energy Saving Tips</h5>
+            </div>
+            <div class="card-body">
+                <div class="accordion" id="savingTipsAccordion">
+                    <div class="accordion-item bg-dark text-light">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button bg-dark text-light" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                Air Conditioning
+                            </button>
+                        </h2>
+                        <div id="collapseOne" class="accordion-collapse collapse show" data-bs-parent="#savingTipsAccordion">
+                            <div class="accordion-body">
+                                <ul>
+                                    <li>Set your AC to 24-26°C instead of lower temperatures</li>
+                                    <li>Use programmable thermostats to reduce cooling when not at home</li>
+                                    <li>Clean AC filters regularly for optimal efficiency</li>
+                                    <li>Consider using ceiling fans along with AC to distribute cool air better</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item bg-dark text-light">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed bg-dark text-light" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                Refrigerator
+                            </button>
+                        </h2>
+                        <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#savingTipsAccordion">
+                            <div class="accordion-body">
+                                <ul>
+                                    <li>Keep your refrigerator temperature between 3-5°C for optimal efficiency</li>
+                                    <li>Ensure good air circulation around the refrigerator</li>
+                                    <li>Clean the coils regularly to maintain efficiency</li>
+                                    <li>Check door seals to prevent cold air leakage</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item bg-dark text-light">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed bg-dark text-light" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                Kitchen Appliances
+                            </button>
+                        </h2>
+                        <div id="collapseThree" class="accordion-collapse collapse" data-bs-parent="#savingTipsAccordion">
+                            <div class="accordion-body">
+                                <ul>
+                                    <li>Use microwave instead of oven when possible</li>
+                                    <li>Match pot size to burner size on the stove</li>
+                                    <li>Use lids when cooking to retain heat and cook faster</li>
+                                    <li>Run dishwashers only when full and use eco mode if available</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initial plot
+        const graph = {{ plot_json | safe }};
+        Plotly.newPlot('pie-chart', graph.data, graph.layout);
+        
+        // Handle month change
+        document.getElementById('month-selector').addEventListener('change', function() {
+            const selectedMonth = this.value;
+            fetch(`/get_appliance_data/${selectedMonth}`)
+                .then(response => response.json())
+                .then(data => {
+                    const updatedGraph = JSON.parse(data.plot_json);
+                    Plotly.react('pie-chart', updatedGraph.data, updatedGraph.layout);
+                })
+                .catch(error => console.error('Error loading data:', error));
+        });
+    });
+</script>
+{% endblock %}

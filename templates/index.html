@@ -1,0 +1,44 @@
+<!-- templates/index.html -->
+{% extends 'base.html' %}
+
+{% block title %}Home{% endblock %}
+
+{% block full_width %}
+<div class="col-12">
+    <div class="p-5 mb-4 bg-dark rounded-3">
+        <div class="container-fluid py-5">
+            <h1 class="display-5 fw-bold" style="color: #19E2C5;">Welcome to Electra.AI</h1>
+            <p class="col-md-8 fs-4">Optimize your household electricity consumption through advanced machine learning algorithms.</p>
+            <a href="/dashboard" class="btn btn-primary btn-lg">Go to Dashboard</a>
+        </div>
+    </div>
+    
+    <div class="row align-items-md-stretch">
+        <div class="col-md-4">
+            <div class="h-100 p-5 bg-dark rounded-3">
+                <h2 style="color: #19E2C5;">Time Series Analysis</h2>
+                <p>Analyze your electricity consumption patterns over time to identify trends and patterns.</p>
+                <a href="/time_series" class="btn btn-primary">View Analysis</a>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="h-100 p-5 bg-dark rounded-3">
+                <h2 style="color: #19E2C5;">Appliance Consumption</h2>
+                <p>Break down your electricity consumption by appliance to identify the biggest energy consumers.</p>
+                <a href="/appliance_consumption" class="btn btn-primary">View Breakdown</a>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="h-100 p-5 bg-dark rounded-3">
+                <h2 style="color: #19E2C5;">Faulty Device Detection</h2>
+                <p>Identify potentially faulty devices based on abnormal consumption patterns.</p>
+                <a href="/faulty_devices" class="btn btn-primary">Check Devices</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block content_with_sidebar %}
+<!-- Content is provided by the full_width block -->
+{% endblock %}
